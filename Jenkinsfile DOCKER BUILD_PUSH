@@ -1,0 +1,23 @@
+pipeline{
+    agent any
+    stages{
+        stage("Build Docker Image"){
+            steps{
+                sh 'docker images'
+                sh "docker build -t dynamic ."
+            }
+        }
+         stage("Docker Push"){
+             steps{
+                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerhubpwd')]) {
+                    sh 'docker login -u kumar5483 -p ${dockerhubpwd}'
+                    sh 'docker tag tomcat kumar5483/tomcat'
+                    sh 'docker push kumar5483/tomcat'
+
+                }
+            }
+        }
+    }
+}
+
+
